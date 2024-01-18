@@ -70,7 +70,7 @@ pub async fn run(env: Environment) -> Result<()> {
                 return Err(error.into());
             }
             Ok(res) => match res {
-                Some(latest_slot) => latest_slot + 1,
+                Some(latest_slot) => latest_slot,
                 None => 0,
             },
         },
@@ -136,15 +136,19 @@ pub async fn run(env: Environment) -> Result<()> {
                         );
 
                         slots_processor
-                            .process_slots(chunk_initial_slot, chunk_final_slot)
+                            .process_slots(chunk_initial_slot, chunk_final_slot + 1)
                             .instrument(slot_manager_span)
                             .await?;
-
+                        println!(
+                            "Processed slots {}-{}",
+                            chunk_initial_slot,
+                            chunk_final_slot + 1
+                        );
                         if let Err(error) = retry_notify(
                             get_exp_backoff_config(),
                             || async move {
                                 blobscan_client
-                                    .update_slot(chunk_final_slot - 1)
+                                    .update_slot(chunk_final_slot)
                                     .await
                                     .map_err(|err| err.into())
                             },
@@ -152,7 +156,7 @@ pub async fn run(env: Environment) -> Result<()> {
                                 let duration = duration.as_secs();
                                 warn!(
                                     target = "indexer",
-                                    latest_slot = chunk_final_slot - 1,
+                                    latest_slot = chunk_final_slot,
                                     "Failed to update latest indexed slot. Retrying in {duration} seconds…"
                                 );
                             },
