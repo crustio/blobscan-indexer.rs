@@ -106,32 +106,34 @@ impl<'a> TryFrom<(&'a EthersBlock<EthersTransaction>, u32)> for Block {
             slot,
             blob_gas_used: match ethers_block.other.get("blobGasUsed") {
                 Some(blob_gas_used) => {
-                    let blob_gas_used = blob_gas_used.as_str().with_context(|| {
-                        format!("Failed to convert `blobGasUsed` field in execution block {number}")
-                    })?;
+                    // let blob_gas_used = '0x'.as_str().with_context(|| {
+                    //     format!("Failed to convert `blobGasUsed` field in execution block {number}")
+                    // })?;
 
-                    U256::from_str_radix(blob_gas_used, 16)?
+                    U256::from_str_radix("0x", 16)?
                 }
                 None => {
-                    return Err(anyhow::anyhow!(
-                        "Missing `blobGasUsed` field in execution block {number}"
-                    ))
+                    U256::from_str_radix("0x", 16)?
+                    // return Err(anyhow::anyhow!(
+                    //     "Missing `blobGasUsed` field in execution block {number}"
+                    // ))
                 }
             },
             excess_blob_gas: match ethers_block.other.get("excessBlobGas") {
                 Some(excess_gas_gas) => {
-                    let excess_blob_gas = excess_gas_gas.as_str().with_context(|| {
-                        format!(
-                            "Failed to convert excess blob gas field in execution block {number}"
-                        )
-                    })?;
+                    // let excess_blob_gas = excess_gas_gas.as_str().with_context(|| {
+                    //     format!(
+                    //         "Failed to convert excess blob gas field in execution block {number}"
+                    //     )
+                    // })?;
 
-                    U256::from_str_radix(excess_blob_gas, 16)?
+                    U256::from_str_radix("0x", 16)?
                 }
                 None => {
-                    return Err(anyhow::anyhow!(
-                        "Missing `excessBlobGas` field in execution block {number}"
-                    ))
+                    U256::from_str_radix("0x", 16)?
+                    // return Err(anyhow::anyhow!(
+                    //     "Missing `excessBlobGas` field in execution block {number}"
+                    // ))
                 }
             },
         })
@@ -169,10 +171,11 @@ impl<'a> TryFrom<(&'a EthersTransaction, &'a EthersBlock<EthersTransaction>)> fo
                     U256::from_str_radix(max_fee_per_blob_gas, 16)?
                 }
                 None => {
-                    return Err(anyhow::anyhow!(
-                        "Missing `maxFeePerBlobGas` field in transaction {hash}",
-                        hash = hash
-                    ))
+                    U256::from_str_radix("0x0", 16)?
+                    // return Err(anyhow::anyhow!(
+                    //     "Missing `maxFeePerBlobGas` field in transaction {hash}",
+                    //     hash = hash
+                    // ))
                 }
             },
         })
