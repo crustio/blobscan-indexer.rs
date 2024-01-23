@@ -21,7 +21,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: gavfu/blobscan-indexer
+          images: crustio/blobscan-indexer
           tags: |
             type=ref,event=branch
             type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', github.event.repository.default_branch) }}
