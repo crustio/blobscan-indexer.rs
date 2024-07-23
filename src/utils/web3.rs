@@ -37,6 +37,10 @@ pub fn calculate_versioned_hash(commitment: &str) -> Result<H256> {
 pub fn get_tx_versioned_hashes(tx: &Transaction) -> Result<Option<Vec<H256>>> {
     match tx.other.get("blobVersionedHashes") {
         Some(blob_versioned_hashes) => {
+            if blob_versioned_hashes.is_null() {
+                return Ok(None);
+            }
+
             let blob_versioned_hashes = blob_versioned_hashes
                 .as_array()
                 .context("blobVersionedHashes field is not an array")?;
